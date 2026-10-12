@@ -1,6 +1,9 @@
 from fastapi import Depends, FastAPI
+from app.config import get_settings
+from app.cors import configure_cors
 from app.routers import health, events, risk
 from app.logging_middleware import RequestLoggingMiddleware
+from app.rate_limit import rate_limit
 from app.security import require_api_key
 
 app = FastAPI(
@@ -10,6 +13,7 @@ app = FastAPI(
 )
 
 app.add_middleware(RequestLoggingMiddleware)
+configure_cors(app, get_settings())
 
 app.include_router(health.router)
 app.include_router(
@@ -22,5 +26,6 @@ app.include_router(
     risk.router,
     prefix="/risk",
     tags=["risk"],
-    dependencies=[Depends(require_api_key)],
+    # Auth runs first, so requests with a bad key never use up the limit.
+    dependencies=[Depends(require_api_key), Depends(rate_limit)],
 )
