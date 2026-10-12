@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     environment: str = "development"
     api_key: str = ""  # set via .env; empty means API key auth is disabled
     risk_rate_limit_per_minute: int = 60  # per client IP on /risk; 0 disables
+    cors_origins: str = ""  # comma-separated browser origins allowed to call the API; empty disables CORS
 
     class Config:
         env_file = ".env"

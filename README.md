@@ -26,6 +26,7 @@ AI_AGENT_URL=http://localhost:8001
 RESPONDER_SECRET_KEY=<Stellar secret key authorized as Responder on the contract>
 API_KEY=<shared secret clients must send in the X-API-Key header>
 RISK_RATE_LIMIT_PER_MINUTE=60
+CORS_ORIGINS=http://localhost:3000
 ```
 
 `RESPONDER_SECRET_KEY` is optional — without it, on-chain submission is
@@ -35,6 +36,16 @@ disabled but reading events and scoring still work.
 `X-API-Key` header with the same value or they get `401`. `/health` and
 `/health/ready` stay public. If `API_KEY` is empty, auth is disabled (handy for local
 development) — always set it in a real deployment.
+
+## CORS
+
+Browsers only let a web page call this API if the page's origin is allowed.
+Set `CORS_ORIGINS` to a comma-separated list, for example
+`CORS_ORIGINS=http://localhost:3000,https://sorowatch.example`. Only those
+origins are allowed (never `*`), for `GET`, `POST` and `OPTIONS` with the
+`X-API-Key` and `Content-Type` headers. If it is empty (the default), no CORS
+headers are sent and browsers on other origins are blocked. CORS only affects
+browsers; it is not a replacement for `API_KEY`.
 
 ## Rate limiting
 

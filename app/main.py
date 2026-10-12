@@ -1,4 +1,6 @@
 from fastapi import Depends, FastAPI
+from app.config import get_settings
+from app.cors import configure_cors
 from app.routers import health, events, risk
 from app.logging_middleware import RequestLoggingMiddleware
 from app.rate_limit import rate_limit
@@ -11,6 +13,7 @@ app = FastAPI(
 )
 
 app.add_middleware(RequestLoggingMiddleware)
+configure_cors(app, get_settings())
 
 app.include_router(health.router)
 app.include_router(
